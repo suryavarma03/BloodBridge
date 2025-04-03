@@ -27,18 +27,21 @@
             <li>Urgency: {{ request_data.urgency }}</li>
         </ul>
 
-        <form action="{{ url_for('donate_blood', request_id=request_id) }}" method="post">
-            <input type="hidden" name="requester_id" value="{{ requester_id }}">
-            <input type="hidden" name="request_id" value="{{ request_id }}">
-            <button class="btn" type="submit">Donate Blood</button>
-        </form>
+        {% if request_id %}
+            <form action="{{ url_for('donate_blood', request_id=request_id) }}" method="post">
+                <input type="hidden" name="request_id" value="{{ request_id }}">
+                <button class="btn" type="submit">Donate Blood</button>
+            </form>
+        {% else %}
+            <p>Error: Request ID missing!</p>
+        {% endif %}
             <!-- <button class="btn" onclick="donateBlood('{{ request[0]}}')">Donate Blood</button> -->
     </div>
 
     <script>
         function donateBlood(requestId, requesterId) {
             // Send a request to the server to update the request status and send a thank you message to the donator
-            fetch('/donate-blood/' + requesterId + '/' + requestId, {
+            fetch('/donate-blood/' + requestId, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
