@@ -102,19 +102,42 @@ def req():
 
     return render_template("request.html", user=user)
 
+# @app.route("/respond/<request_id>")
+# def respond(request_id):
+#     user = session.get('user')
+#     response = requests_table.get_item(Key={'request_id': request_id})
+#     request_data = response.get('Item')
+#     if not request_data:
+#         return redirect(url_for('dashboard'))
+
+#     requester_email = request_data['requester_email']
+#     requester_response = users_table.get_item(Key={'email': requester_email})
+#     requester_data = requester_response.get('Item', {})
+    
+#     return render_template("respond.html", request_data=request_data, requester_data=requester_data, user=user)
+
 @app.route("/respond/<request_id>")
 def respond(request_id):
     user = session.get('user')
+    print(f"User Session: {user}")
+    
     response = requests_table.get_item(Key={'request_id': request_id})
     request_data = response.get('Item')
+    
+    print(f"Request Data: {request_data}")
+
     if not request_data:
+        print("Error: Request not found!")
         return redirect(url_for('dashboard'))
 
     requester_email = request_data['requester_email']
     requester_response = users_table.get_item(Key={'email': requester_email})
     requester_data = requester_response.get('Item', {})
-    
-    return render_template("respond.html", request_data=request_data, requester_data=requester_data, user=user)
+
+    print(f"Requester Data: {requester_data}")
+
+    return render_template("respond.html", request_data=request_data, 
+                           requester_data=requester_data, request_id=request_id)
 
 @app.route("/donate-blood/<request_id>", methods=["POST"])
 def donate_blood(request_id):
